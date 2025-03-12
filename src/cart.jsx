@@ -64,7 +64,7 @@ function Cart() {
           </tfoot>
         </table>
       ) : (
-        <p>Your cart is empty.</p>
+        <p className="cart-empty">Your cart is empty.</p>
       )}
     </>
   );
