@@ -1,48 +1,205 @@
-import { useContext } from "react";
+import { useContext, useState, useRef } from "react";
 import { ProductContext } from "./store/ProductsContext";
 import { useNavigate } from "react-router-dom";
+import useInput, { FieldType } from "./hooks/useInput";
 
 export default function CheckoutPage() {
-  const { cart, addToOrders } = useContext(ProductContext);
+  const { cart, addToOrders, saveUserDetails } = useContext(ProductContext);
+
+  const [isValid, setIsValid] = useState(false);
+
+  // const [errorMessage, setErrorMessage] = useState({});
   const navigate = useNavigate();
+  const firstNameRef = useRef();
+  const lastNameRef = useRef();
+  const emailRef = useRef();
+  const addressRef = useRef();
+  const statesRef = useRef();
+
+  const {
+    val: firstName,
+    setVal: setFirstName,
+    isValid: isFirstNameValid,
+    isTouched: isFirstNameTouched,
+    setIsTouched: setFirstNameTouched,
+    errorMessage: firstNameErrorMessage,
+  } = useInput("", FieldType.NAME, "firstName");
+
+  const {
+    val: lastName,
+    setVal: setLastName,
+    isValid: isLastNameValid,
+    isTouched: isLastNameTouched,
+    setIsTouched: setLastNameTouched,
+    errorMessage: lastNameErrorMessage,
+  } = useInput("", FieldType.NAME, "lastName");
+
+  const {
+    val: email,
+    setVal: setEmail,
+    isValid: isEmailValid,
+    isTouched: isEmailTouched,
+    setIsTouched: setEmailTouched,
+    errorMessage: emailErrorMessage,
+  } = useInput("", FieldType.EMAIL, "email");
+
+  const {
+    val: address,
+    setVal: setAddress,
+    isValid: isAddressValid,
+    isTouched: isAddressTouched,
+    setIsTouched: setAddressTouched,
+    errorMessage: addressErrorMessage,
+  } = useInput("", FieldType.ADDRESS, "address");
+
+  const {
+    val: state,
+    setVal: setState,
+    isValid: isStateValid,
+    isTouched: isStateTouched,
+    setIsTouched: setStateTouched,
+    errorMessage: stateErrorMessage,
+  } = useInput("", FieldType.STATE, "state");
 
   const totalPrice = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  function signUp(formData) {
-    Object.fromEntries(formData);
-  }
+  // function signUp(formData) {
+  //   Object.fromEntries(formData);
+  // }
 
-  function handleCheckout() {
+  // const handleChange = function (e) {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // function validateForm() {
+  //   const newErrors = {};
+  //   if (firstName.trim() === "") newErrors.firstName = "FirstName is Required";
+  //   if (lastNameRef.current.value.trim() === "")
+  //     newErrors.lastName = "Lastname is Required";
+  //   if (!emailRef.current.value.includes("@"))
+  //     newErrors.email = "Enter Valid Email";
+  //   if (addressRef.current.value.trim() === "")
+  //     newErrors.address = "enter Valid Address";
+  //   if (statesRef.current.value === "") newErrors.states = "select your state";
+
+  //   setErrorMessage(newErrors);
+
+  //   if (Object.keys(newErrors).length > 0) {
+  //     if (newErrors.firstName) firstNameRef.current.focus();
+  //     else if (newErrors.lastName) lastNameRef.current.focus();
+  //     else if (newErrors.email) emailRef.current.focus();
+  //     else if (newErrors.address) addressRef.current.focus();
+  //     else if (newErrors.states) statesRef.current.focus();
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
+  function handleCheckout(e) {
+    e.preventDefault();
+
+    if (
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isEmailValid ||
+      !isAddressValid ||
+      !isStateValid
+    ) {
+      setIsValid(false);
+      return;
+    }
+
+    setIsValid(true);
+    const formData = { firstName, lastName, email, address, state };
+    saveUserDetails(formData);
     addToOrders();
     navigate("/order");
   }
 
   return (
     <div className="checkout-container">
-      <form className="checkout-form" action={signUp}>
+      <form className="checkout-form" onSubmit={handleCheckout}>
         <h1>Shipping Address</h1>
+        {!isValid ? (
+          <p className="error">
+            Please fill out all fields correctly before proceeding.
+          </p>
+        ) : null}
         <label>
-          First Name
-          <input type="text" name="firstname" placeholder="Jhon" />
+          First Name:
+          {((!isFirstNameValid && isFirstNameTouched) ||
+            firstNameErrorMessage.firstName) && (
+            <p className="error">{firstNameErrorMessage.firstName}</p>
+          )}
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            onFocus={(e) => setFirstNameTouched(true)}
+          />
         </label>
         <label>
-          Last Name
-          <input type="text" name="lastname" placeholder="Abraham" />
+          Last Name:
+          {((!isLastNameValid && isLastNameTouched) ||
+            lastNameErrorMessage.lastName) && (
+            <p className="error">{lastNameErrorMessage.lastName}</p>
+          )}
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            onFocus={(e) => setLastNameTouched(true)}
+          />
         </label>
         <label>
-          Email
-          <input type="email" name="email" placeholder="jhon@gmail.com" />
+          Email:
+          {((!isEmailValid && isEmailTouched) || emailErrorMessage.email) && (
+            <p className="error">{emailErrorMessage.email}</p>
+          )}
+          <input
+            type="email"
+            name="email"
+            placeholder="XYZ@gmail.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onFocus={(e) => setEmailTouched(true)}
+          />
         </label>
         <label>
-          Street Address
-          <input type="text" name="address" placeholder="h.no -4-7" />
+          Street Address:
+          {((!isAddressValid && isAddressTouched) ||
+            addressErrorMessage.address) && (
+            <p className="error">{addressErrorMessage.address}</p>
+          )}
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            onFocus={(e) => setAddressTouched(true)}
+            // ref={addressRef}
+          />
         </label>
         <label>
-          Select your State
-          <select name="states">
+          Select your State:
+          {((!isStateValid && isStateTouched) || stateErrorMessage.state) && (
+            <p className="error">{stateErrorMessage.state}</p>
+          )}
+          <select
+            name="state"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+            onFocus={() => setStateTouched(true)}
+          >
+            <option value="">Select your state</option>
             <option value="New York"> New York</option>
             <option value="New Jersey"> New Jersey</option>
             <option value="California">California</option>
@@ -50,7 +207,7 @@ export default function CheckoutPage() {
             <option value="Texas">Texas</option>
           </select>
         </label>
-        <button onClick={handleCheckout}>Confirm Checkout</button>
+        <button type="submit">Confirm Checkout</button>
       </form>
 
       <div className="order-summary">

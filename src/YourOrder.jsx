@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { ProductContext } from "./store/ProductsContext";
+import CheckoutPage from "./CheckoutPage";
 
 export default function YourOrders() {
-  const { orders } = useContext(ProductContext);
+  const { orders, userDetails } = useContext(ProductContext);
 
   return (
     <>
@@ -37,10 +38,26 @@ export default function YourOrders() {
                 ))}
               </tbody>
             </table>
+            <h3>Customer Details</h3>
+            <p>
+              <strong>First Name:</strong> {userDetails.firstName}
+            </p>
+            <p>
+              <strong>Last Name:</strong> {userDetails.lastName}
+            </p>
+            <p>
+              <strong>Email:</strong> {userDetails.email}
+            </p>
+            <p>
+              <strong>Address:</strong> {userDetails.address}
+            </p>
+            <p>
+              <strong>State:</strong> {userDetails.states}
+            </p>
           </div>
         ))
       ) : (
-        <p>No orders yet.</p>
+        <p className="cart-empty">No orders yet.</p>
       )}
     </>
   );

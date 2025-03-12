@@ -5,12 +5,19 @@ const ProductContext = createContext({
   cart: [],
   orders: [],
   addToOrders: () => {},
+  userDetails: {},
+  saveUserDetails: () => {},
 });
 
 const ProductProvider = ({ children, products }) => {
   const [items, setItems] = useState(products);
   const [cart, setCart] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [userDetails, setUserDetails] = useState({});
+
+  function saveUserDetails(details) {
+    setUserDetails(details);
+  }
 
   function addToCart(id) {
     const isCartItemExist = cart.some((cartItem) => cartItem.id === id);
@@ -53,7 +60,16 @@ const ProductProvider = ({ children, products }) => {
 
   return (
     <ProductContext.Provider
-      value={{ items, cart, orders, addToCart, removeFromCart, addToOrders }}
+      value={{
+        items,
+        cart,
+        orders,
+        userDetails,
+        addToCart,
+        removeFromCart,
+        addToOrders,
+        saveUserDetails,
+      }}
     >
       {children}
     </ProductContext.Provider>
