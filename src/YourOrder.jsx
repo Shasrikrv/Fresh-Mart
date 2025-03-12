@@ -52,7 +52,7 @@ export default function YourOrders() {
               <strong>Address:</strong> {userDetails.address}
             </p>
             <p>
-              <strong>State:</strong> {userDetails.states}
+              <strong>State:</strong> {userDetails.state}
             </p>
           </div>
         ))
