@@ -5,16 +5,8 @@ import useInput, { FieldType } from "./hooks/useInput";
 
 export default function CheckoutPage() {
   const { cart, addToOrders, saveUserDetails } = useContext(ProductContext);
-
   const [isValid, setIsValid] = useState(false);
-
-  // const [errorMessage, setErrorMessage] = useState({});
   const navigate = useNavigate();
-  const firstNameRef = useRef();
-  const lastNameRef = useRef();
-  const emailRef = useRef();
-  const addressRef = useRef();
-  const statesRef = useRef();
 
   const {
     val: firstName,
@@ -66,41 +58,8 @@ export default function CheckoutPage() {
     0
   );
 
-  // function signUp(formData) {
-  //   Object.fromEntries(formData);
-  // }
-
-  // const handleChange = function (e) {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
-
-  // function validateForm() {
-  //   const newErrors = {};
-  //   if (firstName.trim() === "") newErrors.firstName = "FirstName is Required";
-  //   if (lastNameRef.current.value.trim() === "")
-  //     newErrors.lastName = "Lastname is Required";
-  //   if (!emailRef.current.value.includes("@"))
-  //     newErrors.email = "Enter Valid Email";
-  //   if (addressRef.current.value.trim() === "")
-  //     newErrors.address = "enter Valid Address";
-  //   if (statesRef.current.value === "") newErrors.states = "select your state";
-
-  //   setErrorMessage(newErrors);
-
-  //   if (Object.keys(newErrors).length > 0) {
-  //     if (newErrors.firstName) firstNameRef.current.focus();
-  //     else if (newErrors.lastName) lastNameRef.current.focus();
-  //     else if (newErrors.email) emailRef.current.focus();
-  //     else if (newErrors.address) addressRef.current.focus();
-  //     else if (newErrors.states) statesRef.current.focus();
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
   function handleCheckout(e) {
     e.preventDefault();
-
     if (
       !isFirstNameValid ||
       !isLastNameValid ||
@@ -111,9 +70,9 @@ export default function CheckoutPage() {
       setIsValid(false);
       return;
     }
-
     setIsValid(true);
     const formData = { firstName, lastName, email, address, state };
+    console.log(state);
     saveUserDetails(formData);
     addToOrders();
     navigate("/order");
@@ -185,7 +144,6 @@ export default function CheckoutPage() {
             value={address}
             onChange={(e) => setAddress(e.target.value)}
             onFocus={(e) => setAddressTouched(true)}
-            // ref={addressRef}
           />
         </label>
         <label>
